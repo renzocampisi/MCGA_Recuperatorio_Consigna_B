@@ -4,6 +4,16 @@ import axios from "axios";
 import { useState } from "react";
 import styled from "styled-components";
 import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
+import { getUsers } from './store/slices/counter.slice'; // importamos la acción thunk
+import { useDispatch } from 'react-redux';
+
+const usersRedux = () => {
+  const users = useSelector(state => state.users)
+  return(
+    <div>{users}</div>
+  )
+} 
 const Users = () => {
   const [users, setUsers] = useState([]);
 
@@ -15,11 +25,18 @@ const Users = () => {
       .then((res) => console.log(res));
   };
 
-  useEffect(() => {
+  export const getUsersThunk = () => (dispatch) => {
+		dispatch(setIsLoading(true))
+		return axios.get('http://localhost:4001/api/v1/users/getusers')
+		    .then(res => dispatch(setUsers(res.data)))
+				.finally(() => dispatch(setIsLoading(false))
+}
+
+  /* useEffect(() => {
     axios
       .get("http://localhost:4001/api/v1/users/getusers")
       .then((res) => setUsers(res.data));
-  }, []);
+  }, []); */
 
   const deleteUser = (id) => {
     axios
